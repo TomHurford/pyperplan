@@ -4,4 +4,4 @@
 build/
 dist/
 pyperplan.egg-info/
-.soln
+*.soln
