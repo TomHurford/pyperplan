@@ -23,6 +23,7 @@ from collections import deque
 import logging
 
 from . import searchspace
+from . import breadth_first_search
 
 
 def enforced_hillclimbing_search(planning_task, heuristic, use_preferred_ops=False):
@@ -32,7 +33,7 @@ def enforced_hillclimbing_search(planning_task, heuristic, use_preferred_ops=Fal
 
     @param planning_task: The planning task to solve.
     @return: The solution as a list of operators or None if no solution was
-    found. Note that enforced hill climbing is an incomplete algorith, so it
+    found. Note that enforced hill climbing is an incomplete algorithm, so it
     may fail to find a solution even though the task is solvable.
     """
     # counts the number of loops (only for printing)
@@ -102,7 +103,21 @@ def enforced_hillclimbing_search(planning_task, heuristic, use_preferred_ops=Fal
                     queue.append(successor_node)
                     break
                 else:
-                    queue.append(successor_node)
+                    # queue.append(successor_node)
+                    logging.debug(
+                        "Queue length: %d, h: %f" % (
+                            len(queue), heuristic_value)
+                    )
     logging.info("Enforced hill climbing failed")
     logging.info("%d Nodes expanded" % len(visited))
-    return None
+    logging.info("Starting BFS")
+    # If we get here, we have not found a solution yet, so we try BFS
+    # to find a solution.
+    bfs_solution = breadth_first_search(
+        planning_task
+    )
+    if bfs_solution:
+        return bfs_solution
+    else:
+        logging.info("EHC-BFS failed")
+        return None
