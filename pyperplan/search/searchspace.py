@@ -35,8 +35,8 @@ class SearchNode:
         @param state: The state to store in the search space.
         @param parent: The parent node in the search space.
         @param action: The action which produced the state.
-        @param g: The path length of the node in the count of applied
-                  operators.
+        @param g:   The path length of the node in the count of applied
+                    operators.
         """
         self.state = state
         self.parent = parent
@@ -61,7 +61,7 @@ def make_root_node(initial_state):
     Construct an initial search node. The root node of the search space
     does not links to a parent node, does not contains an action and the
     g-value is zero.
-
+    
     @param initial_state: The initial state of the search space.
     """
     return SearchNode(initial_state, None, None, 0)

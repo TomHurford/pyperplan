@@ -206,7 +206,7 @@ def _create_type_map(objects):
                 # if object_type is None:
                 break
 
-    # TODO sets in map should be ordered lists
+    # TODO : sets in map should be ordered lists
     return type_map
 
 
