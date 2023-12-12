@@ -8,3 +8,4 @@ pyperplan.egg-info/
 .vscode/
 VAL/
 .idea/*
+/VAL/
