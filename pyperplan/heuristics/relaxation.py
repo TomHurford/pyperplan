@@ -399,7 +399,7 @@ class hFFHeuristic(_RelaxationHeuristic):
         heap = []
         for fact in state:
             # Its order is determined by the distance the facts.
-            # As a tie breaker we use a simple counter.
+            # As a tiebreaker we use a simple counter.
             heapq.heappush(
                 heap, (self.facts[fact].distance, self.tie_breaker, self.facts[fact])
             )

@@ -55,6 +55,12 @@ class SearchNode:
         solution.reverse()
         return solution
 
+    def get_parent(self):
+        """
+        Returns the parent node.
+        """
+        return self.parent
+
 
 def make_root_node(initial_state):
     """

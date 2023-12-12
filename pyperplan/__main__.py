@@ -24,6 +24,8 @@ import logging
 import os
 import sys
 
+from icecream import ic
+
 from pyperplan.planner import (
     find_domain,
     HEURISTICS,

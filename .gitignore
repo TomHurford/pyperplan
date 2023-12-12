@@ -6,3 +6,5 @@ dist/
 pyperplan.egg-info/
 *.soln
 .vscode/
+VAL/*
+.idea/*

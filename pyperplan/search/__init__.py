@@ -20,4 +20,5 @@ from .breadth_first_search import breadth_first_search
 from .enforced_hillclimbing_search import enforced_hillclimbing_search
 from .iterative_deepening_search import iterative_deepening_search
 from .sat import sat_solve
+from .adapted_ehc import adapted_enforced_hill_climbing
 from .searchspace import make_child_node, make_root_node
