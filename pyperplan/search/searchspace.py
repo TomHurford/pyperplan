@@ -24,7 +24,7 @@ class SearchNode:
     """
     The SearchNode class implements recursive data structure to build a
     search space for planning algorithms. Each node links to is parent
-    node and contains informations about the state, action to arrive
+    node and contains information about the state, action to arrive
     the node and the path length in the count of applied operators.
     """
 
@@ -65,7 +65,7 @@ class SearchNode:
 def make_root_node(initial_state):
     """
     Construct an initial search node. The root node of the search space
-    does not links to a parent node, does not contains an action and the
+    does not link to a parent node, does not contain an action and the
     g-value is zero.
     
     @param initial_state: The initial state of the search space.

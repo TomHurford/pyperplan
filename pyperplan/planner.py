@@ -33,9 +33,11 @@ SEARCHES = {
     "gbf": search.greedy_best_first_search,
     "bfs": search.breadth_first_search,
     "ehs": search.enforced_hillclimbing_search,
+    "ehs2": search.enforced_hillclimbing_search2,
     "ids": search.iterative_deepening_search,
     "sat": search.sat_solve,
-    "aehs": search.adapted_enforced_hill_climbing,
+    "aehs": search.adapted_enforced_hill_climbing_search,
+    "eehc": search.episodic_ehc_search,
 }
 
 
