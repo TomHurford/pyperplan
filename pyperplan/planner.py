@@ -38,6 +38,7 @@ SEARCHES = {
     "sat": search.sat_solve,
     "aehs": search.adapted_enforced_hill_climbing_search,
     "eehc": search.episodic_ehc_search,
+    "ghc": search.guided_enforced_hill_climbing_search,
 }
 
 

@@ -16,15 +16,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 #
 
-# TODO: Give searches and heuristics commandline options and reenable preferred
-# operators.
+# TODO: Give searches and heuristics commandline options and reenable preferred operators.
 
 import argparse
 import logging
 import os
 import sys
-
-from icecream import ic
 
 from pyperplan.planner import (
     find_domain,

@@ -24,3 +24,4 @@ from .adapted_ehc import adapted_enforced_hill_climbing_search
 from .enforced_hill_climbing_2_search import enforced_hillclimbing_search2
 from .searchspace import make_child_node, make_root_node
 from .episodic_ehc_search import episodic_ehc_search
+from .guided_hill_climbing_search import guided_enforced_hill_climbing_search

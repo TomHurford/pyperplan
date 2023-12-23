@@ -7,44 +7,56 @@ def episodic_ehc_search(planning_task, heuristic):
     logging.info("Starting Episodic Enforced Hill Climbing Search")
     logging.info("-----------------------------------------------")
 
-    """
-    Algorithm:
-        1. Cross episodic dead end set (cache) to hold states that are dead ends
-        2. Initialise the first state and create a variable to hold the best state
-        3. While the initial state has not been added to the dead end set
-            3.1 Run Breadth First Search to find the best successor state (the one with the lowest heuristic value) 
-                that is not a dead end
-            3.2 If there is no successor state, add the current state to the dead end set and reset the current state to
-                the initial state
-            3.3 Else, set the current state to the best successor state
-            3.4 Check if the current state is a goal state, if it is, return the solution
-        4. If no solution return None
-    """
-
     dead_ends = set()
     initial_node = searchspace.make_root_node(planning_task.initial_state)
     current_node = initial_node
+    visited = set()
+    old_count = 0
 
-    while current_node.state not in dead_ends:
+    logging.debug("Initial state: {}".format(initial_node))
+
+    while initial_node.state not in dead_ends:
+        if current_node.state not in visited:
+            visited.add(current_node.state)
+            logging.debug("New State")
+        else:
+            logging.debug("Already Visited State")
+            old_count += 1
         best_successor_node = None
-        best_heuristic_value = float('inf')
+        best_heuristic_value = heuristic(current_node)
 
+        count = 0
         for operator, successor_state in planning_task.get_successor_states(current_node.state):
+            count += 1
             if successor_state not in dead_ends:
                 successor_node = searchspace.make_child_node(current_node, operator, successor_state)
                 heuristic_value = heuristic(successor_node)
                 if heuristic_value < best_heuristic_value:
                     best_heuristic_value = heuristic_value
                     best_successor_node = successor_node
+                    break
+
+        logging.debug("REPEATED VISITS: {}".format(old_count))
+        logging.debug("DEAD-ENDS: {}".format(len(dead_ends)))
+        logging.debug("STATES EXPANDED: {}".format(len(visited)))
+        logging.debug("# SUCCESSORS: {}".format(count))
+        logging.debug("CURRENT H VALUE: {}".format(heuristic(current_node)))
+        logging.debug("IMPROVED H VALUE: {}".format(best_heuristic_value))
 
         if best_successor_node is None:
             dead_ends.add(current_node.state)
             current_node = initial_node
+            logging.debug("DEAD-END, BACKTRACKING")
         else:
             current_node = best_successor_node
+            logging.debug("CONTINUE SEARCH")
 
         if planning_task.goal_reached(current_node.state):
             logging.info("Goal reached. Start extraction of solution.")
+            logging.debug("Number of dead ends: {}".format(len(dead_ends)))
+            logging.debug("Number of visited states: {}".format(len(visited)))
+            logging.debug("Number of repeated visits: {}".format(old_count))
+
             return current_node.extract_solution()
 
     logging.info("No solution found")

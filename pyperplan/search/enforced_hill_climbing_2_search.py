@@ -21,14 +21,14 @@ def enforced_hillclimbing_search2(planning_task, heuristic, use_preferred_ops=Fa
     logging.info("Starting Enforced Hill Climbing Search")
 
     # Initialize a priority queue
-    pqueue = priority_queue.HeuristicPriorityQueue()
+    pqueue = priority_queue.PriorityQueue()
 
     # Create the root node from the initial state of the planning task
     initial_node = searchspace.make_root_node(planning_task.initial_state)
     # Calculate the heuristic value of the initial node
     best_value = heuristic(initial_node)
     # Add the initial node to the priority queue
-    pqueue.add_state(initial_node, best_value)
+    pqueue.add_item(initial_node, best_value)
 
     logging.debug("Initial node added to the priority queue")
 
@@ -66,12 +66,12 @@ def enforced_hillclimbing_search2(planning_task, heuristic, use_preferred_ops=Fa
                     # If it is, update the best value, reset the priority queue and add the new node to it
                     best_value = new_value
                     pqueue.reset()
-                    pqueue.add_state(new_node, new_value)
+                    pqueue.add_item(new_node, new_value)
                     logging.debug("Found a better state, resetting the priority queue")
                     break
                 else:
                     # If it's not, simply add the new node to the priority queue
-                    pqueue.add_state(new_node, new_value)
+                    pqueue.add_item(new_node, new_value)
 
     # If the algorithm has gone through all states without finding a solution, log the information and start a BFS
     logging.info("No Goal found using Enforced Hill Climbing")

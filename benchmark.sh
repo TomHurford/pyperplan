@@ -33,14 +33,14 @@ for problem_set_dir in benchmarks/*; do
       for (( i=0; i<$num_files; i++ )); do
         domain_file=${domain_files_array[$i]}
         task_file=${task_files_array[$i]}
-        python3 pyperplan -H hff -s ehs -l info "$domain_file" "$task_file"
+        python3 pyperplan -H hff -s aehs -l info "$domain_file" "$task_file"
         wait
       done
     else
       # There is one domain file and multiple task files that need to be run with it
       # For each task file run pyperplan on the domain file
       for task_file in $task_files; do
-        python3 pyperplan -H hff -s ehs -l info "$domain_files" "$task_file"
+        python3 pyperplan -H hff -s aehs -l info "$domain_files" "$task_file"
         wait
       done
     fi
