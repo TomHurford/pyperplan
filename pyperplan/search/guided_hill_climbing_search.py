@@ -1,6 +1,7 @@
 from . import searchspace
 from ..ordering import least_failed_first
 from ..utils import queue
+from icecream import ic
 
 import logging
 
@@ -29,41 +30,27 @@ def guided_enforced_hill_climbing_search(planning_task, heuristic):
     @param heuristic:
     @return:
     """
-    ordering_function = least_failed_first.LeastFailedFirst(heuristic, planning_task)
-    open_list = queue.Queue()
+    ordering_heuristic = least_failed_first.LeastFailedFirst(heuristic, planning_task)
+    initial_node = searchspace.make_root_node(planning_task.initial_state)
 
-    initial_state = searchspace.make_root_node(planning_task.initial_state)
-    heuristic_value = heuristic(initial_state)
-
-    successors = planning_task.get_successor_states(initial_state.state)
-
-    for successor in successors:
-        open_list.push(successor)
-
-    def ghc(state):
-        while not open_list.is_empty():
-            best_operator = ordering_function(open_list.list(), state.state)
-            logging.debug("Best operator: {}".format(best_operator.name))
-            if best_operator is None:
-                logging.info("Action based dead end")
-                return None
-            next_state = searchspace.make_child_node(state, best_operator, best_operator.apply(state))
-            if planning_task.goal_reached(next_state.state):
-                logging.info("Goal reached, extracting solution")
-                return next_state.extract_solution()
-            elif heuristic(next_state) < heuristic_value:
-                logging.info("Better state found")
-                ghc(next_state)
+    def ghc(node):
+        heuristic_value = heuristic(node)
+        open_list = planning_task.get_successor_states(node.state)
+        while len(open_list) > 0:
+            operator, successor = ordering_heuristic.pop_best_of(open_list)
+            open_list.remove((operator, successor))
+            successor_node = searchspace.make_child_node(node, operator, successor)
+            if planning_task.goal_reached(successor):
+                logging.info("Goal reached")
+                return successor_node.extract_solution()
+            elif heuristic(successor_node) < heuristic_value:
+                logging.info("Reached successor node")
+                return ghc(successor_node)
             else:
-                next_state_successors = planning_task.get_successor_states(next_state.state)
-                for next_state_successor in next_state_successors:
-                    open_list.push(next_state_successor)
-            ordering_function.update(next_state)
-        logging.info("No solution found, dead end")
+                open_list += planning_task.get_successor_states(successor_node.state)
+            logging.info("Updating ordering measure")
+            ordering_heuristic.update_ordering_measure(successor_node)
+        logging.info("A dead end has occurred")
         return None
 
-    plan = ghc(initial_state)
-
-    if plan is not None:
-        return plan
-    return None
+    return ghc(initial_node)

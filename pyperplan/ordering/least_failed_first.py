@@ -1,10 +1,10 @@
-from ..utils import priority_queue
 from .ordering_base import Ordering
+import heapq
 
 
 class LeastFailedFirst(Ordering):
     """
-    This class implements the Least Failed First ordering.
+    This class implements the Least Failed First ordering heuristic.
     """
 
     def __init__(self, heuristic, task):
@@ -14,31 +14,32 @@ class LeastFailedFirst(Ordering):
         for operator in task.operators:
             self.action_failure_weights[operator] = 0
 
-    def __call__(self, successor_list, current_state):
+    def pop_best_of(self, open_list):
         """
-        This method returns the next action to apply to the given state.
-        @param successor_list: The open list to use.
-        @return: The next action to apply to the given state.
+        Open list contains pairs of (operator, successor_state), where the operator is the action applied to reach the
+        successor state. The object contains a dictionary of action failure weights, which is used to determine the
+        order of the open list. The open list is ordered by the action failure weights of the operators.
+
+        @param open_list: The open list to return the best element from
+        @return: a pair of (operator, successor_state) where the operator is the action applied to reach the successor
         """
-        if not successor_list:
-            return None
+        # Convert open_list to a heap based on action failure weights
+        heap = []
+        counter = 0
+        for op, state in open_list:
+            heap.append((self.action_failure_weights[op], counter, (op, state)))
+            counter += 1
+        heapq.heapify(heap)
 
-        best_operator = None
+        # Pop the operator with the lowest action failure weight
+        _, _, best_successor = heapq.heappop(heap)
+        return best_successor
 
-        for successor in successor_list:
-            operator, state = successor
-            if (best_operator is None or self.action_failure_weights[operator] <
-                    self.action_failure_weights[best_operator]):
-                best_operator = operator
+    def update_ordering_measure(self, successor_node):
+        operator_action_failure_weight = self.calc_action_failure_weight(successor_node)
+        self.action_failure_weights[successor_node.action] = operator_action_failure_weight
 
-        return best_operator
-
-    def update(self, successor):
-        operator, state = successor
-        self.calc_action_failure_weight(operator, state, operator.apply(state))
-        return self.action_failure_weights[operator]
-
-    def calc_action_failure_weight(self, operator, initial_state, successor_state):
+    def calc_action_failure_weight(self, successor_node):
         """
         Calculates the action failure weight for the given operator and state.
 
@@ -55,17 +56,18 @@ class LeastFailedFirst(Ordering):
 
         T = (h(s_i) > h(s_c)) and s_i = Result(s_c, a)
 
-        @param operator: The operator to calculate the action failure weight for.
-        @param initial_state: The state to calculate the action failure weight for.
-        @param successor_state: The successor state to calculate the action failure weight for.
+        @param successor_node: The successor node to calculate the action failure weight for
         @return: The action failure weight.
         """
-        current_weight = self.action_failure_weights[operator]
+        operator = successor_node.action
+        parent_node = successor_node.parent
 
-        successor_heuristic_value = self.heuristic(successor_state)
-        initial_heuristic_value = self.heuristic(initial_state)
+        action_failure_weight = self.action_failure_weights[operator]
+
+        successor_heuristic_value = self.heuristic(successor_node)
+        initial_heuristic_value = self.heuristic(parent_node)
 
         if successor_heuristic_value > initial_heuristic_value:  # I think that maybe this should be < instead of >?
-            return current_weight - (successor_heuristic_value - initial_heuristic_value - 1)
+            return action_failure_weight - (successor_heuristic_value - initial_heuristic_value - 1)
 
-        return current_weight
+        return action_failure_weight

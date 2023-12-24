@@ -16,8 +16,10 @@ class Queue:
             raise IndexError("Queue is empty")
         return self.queue.popleft()
 
+    def peek(self):
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        return self.queue[0]
+
     def size(self):
         return len(self.queue)
-
-    def list(self):
-        return list(self.queue)
