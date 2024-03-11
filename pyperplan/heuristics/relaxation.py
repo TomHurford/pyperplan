@@ -69,7 +69,7 @@ class RelaxedOperator:
         name -- the name of the relaxed operator.
         preconditions -- the preconditions of this operator
         counter -- alternative method to check whether all preconditions are
-                   True
+                True
         add_effects -- the add effects of this operator
         cost -- the cost for applying this operator
         """
