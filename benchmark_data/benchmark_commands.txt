@@ -1,0 +1,28 @@
+python benchmark.py -H hff -s ehc -l benchmarks -b rovers -o rovers -t 120
+python benchmark.py -H hff -s ehc -l benchmarks -b depot -o depot -t 120
+python benchmark.py -H hff -s ehc -l benchmarks -b miconic -o miconic -t 120
+python benchmark.py -H hff -s ehc -l benchmarks -b satellite -o satellite -t 120
+python benchmark.py -H hff -s eehc -l benchmarks -b rovers -o rovers -t 120
+python benchmark.py -H hff -s eehc -l benchmarks -b depot -o depot -t 120
+python benchmark.py -H hff -s eehc -l benchmarks -b miconic -o miconic -t 120
+python benchmark.py -H hff -s eehc -l benchmarks -b satellite -o satellite -t 120
+python benchmark.py -H hff -s gehc -l benchmarks -b rovers -o rovers -t 120
+python benchmark.py -H hff -s gehc -l benchmarks -b depot -o depot -t 120
+python benchmark.py -H hff -s gehc -l benchmarks -b miconic -o miconic -t 120
+python benchmark.py -H hff -s gehc -l benchmarks -b satellite -o satellite -t 120
+python benchmark.py -H hff -s aehc -l benchmarks -b rovers -o rovers -t 120
+python benchmark.py -H hff -s aehc -l benchmarks -b depot -o depot -t 120
+python benchmark.py -H hff -s aehc -l benchmarks -b miconic -o miconic -t 120
+python benchmark.py -H hff -s aehc -l benchmarks -b satellite -o satellite -t 120
+python benchmark.py -H hff -s super_ehc -l benchmarks -b rovers -o rovers -t 120
+python benchmark.py -H hff -s super_ehc -l benchmarks -b depot -o depot -t 120
+python benchmark.py -H hff -s super_ehc -l benchmarks -b miconic -o miconic -t 120
+python benchmark.py -H hff -s super_ehc -l benchmarks -b satellite -o satellite -t 120
+
+csv headers:
+
+task_name, search_name, heuristic_name, lookahead_name, ordering_name, solution_found, solution_length, time_passed, num_lookaheads, total_expansions, total_heuristic_calls, total_ordering_calls, num_restarts, end_message, lookaheads
+
+lookahead:
+
+lookahead_success, lookahead_expansion_count, lookahead_heuristic_call_count, lookahead_ordering_call_count, lookahead_exit_message
