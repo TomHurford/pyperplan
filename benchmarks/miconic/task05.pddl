@@ -1,7 +1,7 @@
 
 
 
-(define (problem mixed-f10-p5-u0-v0-g0-a0-n0-A0-B0-N0-F0-r0)
+(define (problem miconic-05)
    (:domain miconic)
    (:objects p0 p1 p2 p3 p4 - passenger
              f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 - floor)

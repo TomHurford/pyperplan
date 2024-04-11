@@ -1,7 +1,7 @@
 
 
 
-(define (problem mixed-f26-p13-u0-v0-g0-a0-n0-A0-B0-N0-F0-r0)
+(define (problem miconic-13)
    (:domain miconic)
    (:objects p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 
              p10 p11 p12 - passenger

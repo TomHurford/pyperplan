@@ -1,4 +1,4 @@
-(define (problem depotprob5451) (:domain Depot)
+(define (problem depot-09) (:domain Depot)
 (:objects
 	depot0 distributor0 distributor1 truck0 truck1 pallet0 pallet1 pallet2 pallet3 pallet4 pallet5 crate0 crate1 crate2 crate3 crate4 crate5 crate6 crate7 crate8 crate9 crate10 crate11 crate12 crate13 crate14 hoist0 hoist1 hoist2 )
 (:init

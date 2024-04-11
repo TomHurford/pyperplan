@@ -1,4 +1,4 @@
-(define (problem strips-gripper-x-8)
+(define (problem gripper-8)
    (:domain gripper-strips)
    (:objects rooma roomb ball18 ball17 ball16 ball15 ball14 ball13
              ball12 ball11 ball10 ball9 ball8 ball7 ball6 ball5 ball4 ball3
