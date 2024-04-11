@@ -10,3 +10,4 @@ VAL/
 .idea/*
 /VAL/
 .venv/
+*.csv
