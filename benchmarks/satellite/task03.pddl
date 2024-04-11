@@ -1,4 +1,4 @@
-(define (problem satellite-3)
+(define (problem satellite-03)
 (:domain satellite)
 (:objects
 	satellite0
