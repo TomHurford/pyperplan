@@ -106,6 +106,7 @@ def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops 
         if next_node is None:
             dead_end_cache.add(current_node.state)
             logging.info("Dead-end found search restarted")
+            logger.restart()
             restart_count += 1
             logging.debug(f"Restart count: {restart_count}")
             logging.debug(f"Dead-end cache size: {len(dead_end_cache)}")
