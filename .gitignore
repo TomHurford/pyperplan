@@ -9,3 +9,4 @@ pyperplan.egg-info/
 VAL/
 .idea/*
 /VAL/
+.venv/
