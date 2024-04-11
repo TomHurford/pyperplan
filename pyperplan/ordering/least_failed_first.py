@@ -31,3 +31,8 @@ class LeastFailedFirst():
         # We need to return a generator that yields the operator and the successor state
         for op in sorted_operators:
             yield (op, op.apply(state))
+
+    def successor_generator_no_ordering(self, state):
+        applicable_operators = self.get_applicable_operators(state)
+        for op in applicable_operators:
+            yield (op, op.apply(state))

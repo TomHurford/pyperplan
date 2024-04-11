@@ -72,16 +72,19 @@ def enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=False):
     current_node = initial_node
 
     while current_node is not None:
+        current_node = bfs(current_node)
+        
+        if logger.time_up():
+            logging.info(f"Timeout after {logger.max_time}")
+            logger.log_solution(None, "Time limit reached")
+            return None
+        
         if planning_task.goal_reached(current_node.state):
             solution = current_node.extract_solution()
             logging.info("Solution found")
             logger.log_solution(solution, "Solution found")
             return solution
-        current_node = bfs(current_node)
-        if logger.time_up():
-            logging.info(f"Timeout after {logger.max_time}")
-            logger.log_solution(None, f"Timeout after {logger.max_time}")
-            return None
+        
 
 
     logging.info("No solution found")

@@ -25,6 +25,9 @@ def adapted_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=F
         heuristic_calls = 1
 
         while pqueue:
+            if logger.time_up():
+                logging.info("Timeout")
+                return None
             _, _, node = heapq.heappop(pqueue)
 
             if node.state in visited_states:
@@ -39,9 +42,8 @@ def adapted_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=F
                     logging.debug("PRUNED: Successor visited")
                     continue
 
-                expansion_count += 1
-
                 successor_node = searchspace.make_child_node(node, operator, successor)
+                expansion_count += 1
 
                 if planning_task.goal_reached(successor_node.state):
                     logging.debug("Goal found in lookahead")
@@ -79,17 +81,22 @@ def adapted_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=F
     max_queue_size = 10000
 
     while current_node is not None:
+        current_node = best_first_search(current_node)
+        
+        if logger.time_up():
+            logging.info(f"Time limit reached")
+            logger.log_solution(None, "Time limit reached")
+            return None
+        
+        if current_node is None:
+            break
+        
         if planning_task.goal_reached(current_node.state):
             solution = current_node.extract_solution()
             logging.info("Solution Found")
             logger.log_solution(solution, "Solution Found")
             return solution
-        if logger.time_up():
-            logging.info(f"Timeout after {logger.max_time}")
-            logger.log_solution(None, f"Timeout after {logger.max_time}")
-            return None
         
-        current_node = best_first_search(current_node)
 
     logging.info("No Solution Found")
     logger.log_solution(None, "No Solution Found")

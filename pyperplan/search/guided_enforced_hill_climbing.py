@@ -26,6 +26,9 @@ def guided_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=Fa
         ordering_calls = 0
 
         while queue:
+            if logger.time_up():
+                logging.info("Timeout")
+                return None
             node = queue.popleft()
 
             node_h_value = heuristic(node)
@@ -89,7 +92,7 @@ def guided_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=Fa
             return solution
         if logger.time_up():
             logging.info(f"Timeout after {logger.max_time}")
-            logger.log_solution(None, f"Timeout after {logger.max_time}")
+            logger.log_solution(None, "Time limit reached}")
             return None
         
         current_node = bfs(current_node)

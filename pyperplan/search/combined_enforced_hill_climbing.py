@@ -11,7 +11,7 @@ from . import searchspace
 from .benchmarking import Benchmark
 
 def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops = False):
-    logger = Benchmark(planning_task.name, heuristic.name, "combined_ehc", "BeFS", "LFF")
+    logger = Benchmark(planning_task.name, heuristic.name, "super_ehc", "BeFS", "LFF")
     logging.info("Starting Enforced Hill Climbing Search+")
 
     def best_first_search(start_node):
@@ -31,6 +31,9 @@ def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops 
         heapq.heappush(pqueue, (base_h_val, expansion_count, start_node))
 
         while pqueue:
+            if logger.time_up():
+                logging.info("Timeout")
+                return None
             node_h_val, _, node = heapq.heappop(pqueue)
 
             if node.state in dead_end_cache:
@@ -42,7 +45,7 @@ def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops 
                 continue
             visited_states.add(node.state)
 
-            for operator, successor in ordering.successor_generator(node.state):
+            for operator, successor in ordering.successors_generator(node.state):
                 if successor in dead_end_cache:
                     logging.debug("PRUNED: Successor in dead-end cache")
                     continue
@@ -52,6 +55,11 @@ def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops 
 
                 successor_node = searchspace.make_child_node(node, operator, successor)
                 expansion_count += 1
+
+                if planning_task.goal_reached(successor_node.state):
+                    logging.debug("Goal found in lookahead")
+                    logger.log_lookahead(True, expansion_count, heuristic_calls, ordering_calls, "Goal found")
+                    return successor_node
                 
                 if successor in state_heuristic_cache:
                     successor_h_value = state_heuristic_cache[successor]
@@ -97,12 +105,13 @@ def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops 
     current_node = initial_node
 
     while initial_node.state not in dead_end_cache:
+        next_node = best_first_search(current_node)
+
         if logger.time_up():
             logging.info("Time limit reached")
             logger.log_solution(None, "Time limit reached")
             return None
-
-        next_node = best_first_search(current_node)
+        
         if next_node is None:
             dead_end_cache.add(current_node.state)
             logging.info("Dead-end found search restarted")
@@ -112,7 +121,9 @@ def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops 
             logging.debug(f"Dead-end cache size: {len(dead_end_cache)}")
             current_node = initial_node
             continue
+        
         current_node = next_node
+        
         if planning_task.goal_reached(current_node.state):
             solution = current_node.extract_solution()
             logging.info("Solution found")

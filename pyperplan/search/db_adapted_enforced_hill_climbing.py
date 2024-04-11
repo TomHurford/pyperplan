@@ -24,6 +24,9 @@ def db_adapted_enforced_hill_climbing(planning_task, heuristic, use_preferred_op
         heuristic_count = 1
 
         while pqueue:
+            if logger.time_up():
+                logging.info("Timeout")
+                return None
             _, _, node = heapq.heappop(pqueue)
 
             if node.state in visited_states:
@@ -79,12 +82,13 @@ def db_adapted_enforced_hill_climbing(planning_task, heuristic, use_preferred_op
     restart_count = 0
 
     while initial_node.state not in dead_end_cache:
+        next_node = depth_bound_best_first_search(current_node)
+        
         if logger.time_up():
             logging.info(f"Time limit reached")
             logger.log_solution(None, "Time limit reached")
             return None
         
-        next_node = depth_bound_best_first_search(current_node)
         if next_node is None:
             dead_end_cache.add(current_node.state)
             logging.info("Dead end found search restarted")
@@ -93,7 +97,9 @@ def db_adapted_enforced_hill_climbing(planning_task, heuristic, use_preferred_op
             logging.debug(f"Restart count: {restart_count}")
             current_node = initial_node
             continue
+        
         current_node = next_node
+        
         if planning_task.goal_reached(current_node.state):
             solution = current_node.extract_solution()
             logging.info("Solution Found")

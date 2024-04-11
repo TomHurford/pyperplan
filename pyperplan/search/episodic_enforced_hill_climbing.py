@@ -24,6 +24,10 @@ def episodic_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=
         heuristic_calls = 1
 
         while queue:
+            if logger.time_up():
+                logging.info("Timeout")
+                return None
+
             node = queue.popleft()
 
             if node.state in dead_end_cache:
@@ -85,12 +89,13 @@ def episodic_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=
     restart_count = 0
 
     while initial_node.state not in dead_end_cache:
+        next_node = db_bfs(current_node)
+
         if logger.time_up():
             logging.info("Time limit reached")
             logger.log_solution(None, "Time limit reached")
             return None
         
-        next_node = db_bfs(current_node)
         if next_node is None:
             dead_end_cache.add(current_node.state)
             logging.info("Dead end found, search restarted")
