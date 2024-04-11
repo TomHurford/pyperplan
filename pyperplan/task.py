@@ -122,7 +122,9 @@ class Task:
         operator and "new_state" the state that results when "op" is applied
         in state "state".
         """
-        return [(op, op.apply(state)) for op in self.operators if op.applicable(state)]
+        successors = [(op, op.apply(state)) for op in self.operators if op.applicable(state)]
+        # Sort successors by operator name
+        return sorted(successors, key=lambda x: x[0].name)
 
     def __str__(self):
         s = "Task {0}\n  Vars:  {1}\n  Init:  {2}\n  Goals: {3}\n  Ops:   {4}"

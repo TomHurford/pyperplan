@@ -45,7 +45,7 @@ class SearchNode:
 
     def extract_solution(self):
         """
-        Returns the list of actions that were applied from the initial node to
+        Returns the list of actions that were applied from the initial node to 
         the goal node.
         """
         solution = []
@@ -61,7 +61,22 @@ class SearchNode:
         """
         return self.parent
 
-
+    def __eq__(self, other):
+        """
+        Checks if two nodes are equal by comparing their states, actions, and 
+        parents.
+        """
+        # Check that the other object is a SearchNode
+        if not isinstance(other, SearchNode):
+            return False
+        return self.state == other.state and self.action == other.action and self.parent == other.parent
+    
+    def __hash__(self):
+        """
+        Hashes the state, action, and parent of the node.
+        """
+        return hash((self.state, self.action, self.parent))
+    
 def make_root_node(initial_state):
     """
     Construct an initial search node. The root node of the search space

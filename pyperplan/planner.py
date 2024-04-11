@@ -33,12 +33,14 @@ SEARCHES = {
     "gbf": search.greedy_best_first_search,
     "bfs": search.breadth_first_search,
     "ehs": search.enforced_hillclimbing_search,
-    "ehs2": search.enforced_hillclimbing_search2,
     "ids": search.iterative_deepening_search,
     "sat": search.sat_solve,
-    "aehs": search.adapted_enforced_hill_climbing_search,
-    "eehc": search.episodic_ehc_search,
-    "ghc": search.guided_enforced_hill_climbing_search,
+    "ehc": search.enforced_hill_climbing,
+    "eehc": search.episodic_enforced_hill_climbing,
+    "gehc": search.guided_enforced_hill_climbing,
+    "aehc": search.adapted_enforced_hill_climbing,
+    "db_aehc": search.db_adapted_enforced_hill_climbing,
+    "ehc+": search.combined_enforced_hill_climbing
 }
 
 

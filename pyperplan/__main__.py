@@ -22,6 +22,7 @@ import argparse
 import logging
 import os
 import sys
+import csv
 
 from pyperplan.planner import (
     find_domain,
@@ -35,7 +36,7 @@ from pyperplan.planner import (
 
 def main():
     # Commandline parsing
-    log_levels = ["debug", "info", "warning", "error"]
+    log_levels = ["debug", "info", "warning", "error", "benchmarks"]
 
     # get pretty print names for the search algorithms:
     # use the function/class name and strip off '_search'
@@ -66,13 +67,50 @@ def main():
         help=f"Select a search algorithm from {search_names}",
         default="bfs",
     )
+    argparser.add_argument(
+        "-o", 
+        "--output",
+        type=str,
+        default="",
+        help="Output file for benchmark results"
+    )
     args = argparser.parse_args()
 
+    BENCHMARK = 25
+    logging.addLevelName(BENCHMARK, "BENCHMARK")
+
+    def benchmarks(self, message, *args, **kws):
+        if self.isEnabledFor(BENCHMARK):
+            self._log(BENCHMARK, message, args, **kws)
+
+    logging.Logger.benchmarks = benchmarks
+
+    if args.loglevel.lower() == "benchmarks":
+        level = BENCHMARK
+    else:
+        level = getattr(logging, args.loglevel.upper())
+
     logging.basicConfig(
-        level=getattr(logging, args.loglevel.upper()),
+        level=level,
         format="%(asctime)s %(levelname)-8s %(message)s",
         stream=sys.stdout,
     )
+
+    if args.loglevel == "benchmarks":
+        if args.output == "":
+            print("ERROR: No output file specified for benchmarking", file=sys.stderr)
+            argparser.print_help()
+            sys.exit(2)
+        log_file = "./benchmark_data/" + str(args.output) + ".csv"
+        log_handler = logging.FileHandler(log_file)
+        log_handler.setFormatter(
+            logging.Formatter('%(message)s')
+        )
+
+        logger = logging.getLogger()
+        logger.setLevel(level)
+        logger.addHandler(log_handler)
+
 
     hffpo_searches = ["gbf", "wastar", "ehs"]
     if args.heuristic == "hffpo" and args.search not in hffpo_searches:
@@ -107,7 +145,9 @@ def main():
     )
 
     if solution is None:
-        logging.warning("No solution could be found")
+        # Commented for benchmarking
+        # logging.warning("No solution could be found")
+        pass
     else:
         solution_file = args.problem + ".soln"
         logging.info("Plan length: %s" % len(solution))

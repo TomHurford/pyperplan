@@ -20,8 +20,13 @@ from .breadth_first_search import breadth_first_search
 from .enforced_hillclimbing_search import enforced_hillclimbing_search
 from .iterative_deepening_search import iterative_deepening_search
 from .sat import sat_solve
-from .adapted_ehc import adapted_enforced_hill_climbing_search
-from .enforced_hill_climbing_2_search import enforced_hillclimbing_search2
 from .searchspace import make_child_node, make_root_node
-from .episodic_ehc_search import episodic_ehc_search
-from .guided_hill_climbing_search import guided_enforced_hill_climbing_search
+
+# Tom Hurford
+from .enforced_hill_climbing import enforced_hill_climbing
+from .depth_bound_enforced_hill_climbing import depth_bound_enforced_hill_climbing
+from .episodic_enforced_hill_climbing import episodic_enforced_hill_climbing
+from .guided_enforced_hill_climbing import guided_enforced_hill_climbing
+from .adapted_enforced_hill_climbing import adapted_enforced_hill_climbing
+from .db_adapted_enforced_hill_climbing import db_adapted_enforced_hill_climbing
+from .combined_enforced_hill_climbing import combined_enforced_hill_climbing

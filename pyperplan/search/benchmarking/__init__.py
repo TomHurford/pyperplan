@@ -1,0 +1,1 @@
+from .search_benchmark import Benchmark

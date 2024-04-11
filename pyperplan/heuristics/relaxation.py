@@ -108,6 +108,7 @@ class _RelaxationHeuristic(Heuristic):
         self.init = task.initial_state
         self.tie_breaker = 0
         self.start_state = RelaxedFact("start")
+        self.call_counter = 0
 
         # Create relaxed facts for all facts in the task description.
         for fact in task.facts:
@@ -135,6 +136,8 @@ class _RelaxationHeuristic(Heuristic):
         Keyword arguments:
         node -- the current state
         """
+        self.call_counter += 1
+
         state = node.state
         state = set(state)
 
@@ -274,6 +277,10 @@ class _RelaxationHeuristic(Heuristic):
                 # Finally the fact is marked as expanded.
                 fact.expanded = True
 
+    def get_call_counter(self):
+        """This function returns the number of times the heuristic was called."""
+        return self.call_counter
+
 
 class hAddHeuristic(_RelaxationHeuristic):
     """This class is an implementation of the hADD heuristic.
@@ -288,6 +295,7 @@ class hAddHeuristic(_RelaxationHeuristic):
         """
         super().__init__(task)
         self.eval = sum
+        self.name = "hadd"
 
 
 class hMaxHeuristic(_RelaxationHeuristic):
@@ -303,6 +311,7 @@ class hMaxHeuristic(_RelaxationHeuristic):
         """
         super().__init__(task)
         self.eval = max
+        self.name = "hmax"
 
 
 class hSAHeuristic(_RelaxationHeuristic):
@@ -310,6 +319,13 @@ class hSAHeuristic(_RelaxationHeuristic):
 
     It derives from the _RelaxationHeuristic class.
     """
+    def __init__(self, task):
+        """
+        To make this class an implementation of hSA, apart from deriving from
+        _RelaxationHeuristic, we need to overwrite get_cost and calc_goal_h.
+        """
+        super().__init__(task)
+        self.name = "hsa"
 
     def get_cost(self, operator, pre):
         """
@@ -384,11 +400,13 @@ class hFFHeuristic(_RelaxationHeuristic):
         """
         super().__init__(task)
         self.eval = sum
+        self.name = "hff"
 
     def calc_h_with_plan(self, node):
         """
         Helper method to calculate hFF value together with a relaxed plan.
         """
+        self.call_counter += 1
         state = node.state
         state = set(state)
         # Reset distance and set to default values.
