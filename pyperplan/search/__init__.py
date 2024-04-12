@@ -24,9 +24,7 @@ from .searchspace import make_child_node, make_root_node
 
 # Tom Hurford
 from .enforced_hill_climbing import enforced_hill_climbing
-from .depth_bound_enforced_hill_climbing import depth_bound_enforced_hill_climbing
 from .episodic_enforced_hill_climbing import episodic_enforced_hill_climbing
 from .guided_enforced_hill_climbing import guided_enforced_hill_climbing
-from .adapted_enforced_hill_climbing import adapted_enforced_hill_climbing
-from .db_adapted_enforced_hill_climbing import db_adapted_enforced_hill_climbing
+from .hb_enforced_hill_climbing import hbehc
 from .hybrid_enforced_hill_climbing import hybrid_enforced_hill_climbing

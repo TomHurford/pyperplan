@@ -7,7 +7,7 @@ class Benchmark():
         self.logger = logging.getLogger(__name__)
 
         # Max time
-        self.max_time = 600
+        self.max_time = 240
 
         # Overview Information
         self.task_name = task_name

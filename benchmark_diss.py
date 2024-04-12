@@ -4,7 +4,7 @@ import concurrent.futures
 # Example command
 # python benchmark.py -H hff -s {search} -l benchmarks -b {benchmark_folder} -o {output_file} -t {timeout}
 
-searches = ["ehc", "eehc", "gehc", "aehc", "hybrid_ehc"]
+searches = ["ehc", "eehc", "gehc", "hb_ehc", "hybrid_ehc"]
 benchmarks = ["rovers", "depot", "miconic", "satellite"]
 
 commands = list()
@@ -13,8 +13,6 @@ for benchmark in benchmarks:
     for search in searches:
         command = f"python benchmark.py -H hff -s {search} -l benchmarks -b {benchmark} -o {benchmark}_{search} -t 0"
         commands.append(command)
-
-commands = sorted(commands)
 
 def run_command(command):
     print(f"Running command: {command}")

@@ -38,14 +38,12 @@ SEARCHES = {
     "ehc": search.enforced_hill_climbing,
     "eehc": search.episodic_enforced_hill_climbing,
     "gehc": search.guided_enforced_hill_climbing,
-    "aehc": search.adapted_enforced_hill_climbing,
-    "db_aehc": search.db_adapted_enforced_hill_climbing,
+    "hb_ehc": search.hbehc,
     "hybrid_ehc": search.hybrid_enforced_hill_climbing
 }
 
 
 NUMBER = re.compile(r"\d+")
-
 
 def get_heuristics():
     """
