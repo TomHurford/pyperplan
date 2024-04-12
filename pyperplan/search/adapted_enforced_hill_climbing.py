@@ -66,10 +66,10 @@ def adapted_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=F
 
                 heapq.heappush(pqueue, (successor_h_value, expansion_count, successor_node))
 
-                if len(pqueue) > max_queue_size:
-                    logging.debug("Queue size exceeded")
-                    logger.log_lookahead(False, expansion_count, heuristic_calls, 0, "Queue size exceeded")
-                    return None
+                # if len(pqueue) > max_queue_size:
+                #     logging.debug("Queue size exceeded")
+                #     logger.log_lookahead(False, expansion_count, heuristic_calls, 0, "Queue size exceeded")
+                #     return None
 
         logger.log_lookahead(False, expansion_count, heuristic_calls, 0, "Lookahead exhausted")
         return None

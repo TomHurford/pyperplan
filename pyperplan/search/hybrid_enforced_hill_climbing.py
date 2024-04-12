@@ -10,11 +10,11 @@ from pyperplan.ordering.least_failed_first import LeastFailedFirst
 from . import searchspace
 from .benchmarking import Benchmark
 
-def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops = False):
+def hybrid_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops = False):
     logger = Benchmark(planning_task.name, heuristic.name, "super_ehc", "BeFS", "LFF")
     logging.info("Starting Enforced Hill Climbing Search+")
 
-    def best_first_search(start_node):
+    def bounded_best_first_search(start_node):
         heuristic_calls = 0
         expansion_count = 0
         ordering_calls = 0
@@ -105,7 +105,7 @@ def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops 
     current_node = initial_node
 
     while initial_node.state not in dead_end_cache:
-        next_node = best_first_search(current_node)
+        next_node = bounded_best_first_search(current_node)
 
         if logger.time_up():
             logging.info("Time limit reached")
@@ -133,10 +133,3 @@ def combined_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops 
     logging.info("No solution found")
     logger.log_solution(None, "No solution found")
     return None
-
-            
-            
-
-
-
-

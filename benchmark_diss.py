@@ -4,7 +4,7 @@ import concurrent.futures
 # Example command
 # python benchmark.py -H hff -s {search} -l benchmarks -b {benchmark_folder} -o {output_file} -t {timeout}
 
-searches = ["ehc", "eehc", "gehc", "aehc", "ehc+"]
+searches = ["ehc", "eehc", "gehc", "aehc", "hybrid_ehc"]
 benchmarks = ["rovers", "depot", "miconic", "satellite"]
 
 commands = list()

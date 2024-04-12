@@ -40,7 +40,7 @@ SEARCHES = {
     "gehc": search.guided_enforced_hill_climbing,
     "aehc": search.adapted_enforced_hill_climbing,
     "db_aehc": search.db_adapted_enforced_hill_climbing,
-    "ehc+": search.combined_enforced_hill_climbing
+    "hybrid_ehc": search.hybrid_enforced_hill_climbing
 }
 
 
