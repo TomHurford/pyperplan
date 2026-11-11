@@ -17,6 +17,7 @@ def episodic_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=
         # Initialize the best heuristic value and the open list
         best_h_val = heuristic(start_node)
         open_list = deque([start_node])
+        visited_states = {start_node.state}
 
         # Initialize counters for expansions and heuristic calls
         expansion_count = 0
@@ -42,6 +43,11 @@ def episodic_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=
 
             # Loop through the successors
             for operator, successor in successors:
+                if logger.time_up():
+                    return None
+                if successor in visited_states:
+                    continue
+                visited_states.add(successor)
                 # If the successor is in the dead-end cache, skip it
                 if successor in dead_end_cache:
                     logging.debug("PRUNED: Successor in dead-end cache")
@@ -78,6 +84,9 @@ def episodic_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=
     dead_end_cache = set()
     initial_node = searchspace.make_root_node(planning_task.initial_state)
     current_node = initial_node
+    if planning_task.goal_reached(initial_node.state):
+        logger.log_solution([], "Solution found at start")
+        return []
     restart_count = 0
 
     # Start the main loop
@@ -108,3 +117,6 @@ def episodic_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=
             logging.info("Solution found")
             logger.log_solution(solution, "Solution found")
             return solution
+
+    logger.log_solution(None, "No solution found")
+    return None

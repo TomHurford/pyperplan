@@ -18,6 +18,7 @@ def enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=False):
         # Initialize the best heuristic value, queue, depth, and visited states
         best_h_val = heuristic(start_node)
         queue = deque([start_node])
+        visited_states = {start_node.state}
 
         # Initialize counters for expansions and heuristic calls
         expansion_count = 0
@@ -25,6 +26,9 @@ def enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=False):
 
         # Start the BFS loop
         while queue:
+            if logger.time_up():
+                logger.log_lookahead(False, expansion_count, heuristic_calls, 0, "Timeout")
+                return None
             node = queue.popleft()
 
             # Get the successors of the current node
@@ -32,6 +36,11 @@ def enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=False):
 
             # Loop through the successors
             for operator, successor in successors:
+                if logger.time_up():
+                    return None
+                if successor in visited_states:
+                    continue
+                visited_states.add(successor)
                 # Increment the expansion count
                 expansion_count += 1
 
@@ -64,6 +73,9 @@ def enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=False):
     # Initialize the root node and the current node
     initial_node = searchspace.make_root_node(planning_task.initial_state)
     current_node = initial_node
+    if planning_task.goal_reached(initial_node.state):
+        logger.log_solution([], "Solution found at start")
+        return []
 
     # Start the main loop
     while current_node is not None:

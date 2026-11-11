@@ -20,6 +20,7 @@ def guided_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=Fa
         # Initialize the best heuristic value and the open list
         best_h_val = heuristic(start_node)
         queue = deque([start_node])
+        visited_states = {start_node.state}
 
         # Initialize counters for expansions, heuristic calls, and ordering calls
         expansion_count = 0
@@ -42,6 +43,11 @@ def guided_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=Fa
 
             # Loop through the successors of the current node
             for operator, successor in ordering.successor_generator(node.state):
+                if logger.time_up():
+                    return None
+                if successor in visited_states:
+                    continue
+                visited_states.add(successor)
                 # Increment the expansion count
                 expansion_count += 1
 

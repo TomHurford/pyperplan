@@ -98,10 +98,10 @@ def find_domain(problem):
     """
     dir, name = os.path.split(problem)
     number_match = NUMBER.search(name)
-    number = number_match.group(0)
+    number = number_match.group(0) if number_match else None
     domain = os.path.join(dir, "domain.pddl")
     for file in os.listdir(dir):
-        if "domain" in file and number in file:
+        if number is not None and "domain" in file and number in file:
             domain = os.path.join(dir, file)
             break
     if not os.path.isfile(domain):

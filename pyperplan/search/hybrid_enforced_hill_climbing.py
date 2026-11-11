@@ -37,6 +37,9 @@ def hybrid_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops = 
 
         # Main loop for BBFS
         while pqueue:
+            if logger.time_up():
+                logger.log_lookahead(False, expansion_count, heuristic_calls, ordering_calls, "Timeout")
+                return None
             node_h_val, _, node = heapq.heappop(pqueue)
 
             # Skip if node is in the dead-end cache
@@ -52,6 +55,8 @@ def hybrid_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops = 
 
             # Generate successors
             for operator, successor in ordering.successor_generator(node.state):
+                if logger.time_up():
+                    return None
                 # Skip if successor is in the dead-end cache or already visited
                 if successor in dead_end_cache:
                     logging.debug("PRUNED: Successor in dead-end cache")
@@ -123,6 +128,9 @@ def hybrid_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops = 
     # Create the initial node
     initial_node = searchspace.make_root_node(planning_task.initial_state)
     current_node = initial_node
+    if planning_task.goal_reached(initial_node.state):
+        logger.log_solution([], "Solution found at start")
+        return []
 
     # Main loop for the Hybrid Enforced Hill Climbing (HEHC) algorithm
     while initial_node.state not in dead_end_cache:

@@ -58,129 +58,78 @@ def hb_enforced_hill_climbing(planning_task, heuristic, use_preferred_ops=False)
                 heapq.heappush(queue, best_local_state.get_parent())
     return None
 
-# This is a conversion of the structure to match the lookahead function and handler structure introduced in my dissertation
 def hbehc(planning_task, heuristic, use_preferred_ops=False):
-    # Initialize the benchmark logger
+    """Use bounded greedy lookahead, backtracking after failed improvements."""
     logger = Benchmark(planning_task.name, heuristic.name, "hb_ehc", "GBFS", "None")
-    logging.info("Starting Heaps and Backtracking Enforced Hill Climbing Search")
+    logger.start_timer()
+    max_queue_size = 10000
+    backtracks_left = 50
+    failed_states = set()
 
-    # Define the Greedy Best-First Search (GBFS) lookahead function
     def gbfs_lookahead(start_node):
-        # Initialize counters and variables
         expansion_count = 0
-        heuristic_count = 0
-        nonlocal best_value, best_local_state
-        queue = []
-        closed = set()
-        heapq.heappush(queue, (heuristic(start_node), expansion_count, start_node))
-        heuristic_count += 1
+        heuristic_count = 1
+        base_value = heuristic(start_node)
+        queue = [(base_value, 0, start_node)]
+        visited_states = {start_node.state}
 
-        # Main loop for GBFS lookahead
+        def finish(node, message):
+            logger.log_lookahead(
+                node is not None, expansion_count, heuristic_count, 0, message
+            )
+            return node
+
         while queue:
+            if logger.time_up():
+                return finish(None, "Timeout")
             _, _, node = heapq.heappop(queue)
-
-            # Skip if node is already closed
-            if node in closed:
-                continue
-            closed.add(node)
-            expansion_count += 1
-
-            # Check if goal is reached
-            if planning_task.goal_reached(node.state):
-                logging.info("Goal found in lookahead")
-                logger.log_lookahead(True, expansion_count, heuristic_count, 0, "Goal found in lookahead")
-                return node
-            
-            # Generate successors
-            successors = planning_task.get_successor_states(node.state)
-            for operator, successor in successors:
+            for operator, successor in planning_task.get_successor_states(node.state):
+                if logger.time_up():
+                    return finish(None, "Timeout")
+                if successor in failed_states or successor in visited_states:
+                    continue
+                visited_states.add(successor)
                 successor_node = searchspace.make_child_node(node, operator, successor)
                 expansion_count += 1
-                successor_h_val = heuristic(successor_node)
+                if planning_task.goal_reached(successor):
+                    return finish(successor_node, "Goal found in lookahead")
+                value = heuristic(successor_node)
                 heuristic_count += 1
+                if value == float("inf"):
+                    continue
+                if value < base_value:
+                    return finish(successor_node, "Better state found in lookahead")
+                heapq.heappush(queue, (value, expansion_count, successor_node))
+                if len(queue) > max_queue_size:
+                    return finish(None, "Queue length limit reached")
+        return finish(None, "Lookahead exhausted")
 
-                # Check if successor is better than the best known state
-                if successor_h_val < best_value:
-                    best_value = successor_h_val
-                    best_local_state = successor_node
-                    logging.debug("Better state found in lookahead")
-                    logger.log_lookahead(True, expansion_count, heuristic_count, 0, "Better state found in lookahead")
-                    return successor_node
-                
-                # Add successor to the queue
-                heapq.heappush(queue, (successor_h_val, expansion_count, successor_node))
-
-            # Check if queue length limit is reached
-            if len(queue) > c:
-                logging.debug("Queue length limit reached")
-                logger.log_lookahead(False, expansion_count, heuristic_count, 0, "Queue length limit reached")
-                return None
-            
-        # If queue is exhausted, return None
-        logging.debug("Lookahead exhausted")
-        logger.log_lookahead(False, expansion_count, heuristic_count, 0, "Lookahead exhausted")
-        return None
-    
-    # Start the timer for the benchmark
-    logger.start_timer()
-    # Create the initial node
-    initial_node = searchspace.make_root_node(planning_task.initial_state)
-
-    # Initialize parameters
-    c = 10000
-    l = 50
-    queue = []
-    closed = set()
-    current_node = initial_node
-    best_local_state = None
-
-    # Check if the initial state is the goal
-    if planning_task.goal_reached(current_node.state):
-        solution = current_node.extract_solution()
-        logging.info("Solution found at start")
-        logger.log_solution(solution, "Solution found at start")
-        return current_node.extract_solution()
-    
-    # Compute the heuristic value of the initial state
-    best_value = heuristic(current_node)
-    closed.add(current_node)
-    heapq.heappush(queue, (best_value, -1, current_node))
-
-    # Main loop for the Enforced Hill Climbing (EHC) algorithm
-    while queue:
-        # Check if time is up
+    current_node = searchspace.make_root_node(planning_task.initial_state)
+    while current_node is not None:
+        if planning_task.goal_reached(current_node.state):
+            solution = current_node.extract_solution()
+            logger.log_solution(solution, "Solution found")
+            return solution
         if logger.time_up():
-            logging.info("Timeout")
             logger.log_solution(None, "Timeout")
             return None
-                
-        # Perform GBFS lookahead
-        next_node = gbfs_lookahead(current_node)
 
-        # Process the result of the lookahead
-        if next_node:
-            # If goal is reached, return the solution
-            if planning_task.goal_reached(next_node.state):
-                solution = next_node.extract_solution()
-                logging.info("Solution found")
-                logger.log_solution(solution, "Solution found")
-                return solution
-            # Update the current node
+        next_node = gbfs_lookahead(current_node)
+        if logger.time_up():
+            logger.log_solution(None, "Timeout")
+            return None
+        if next_node is not None:
             current_node = next_node
             continue
-        elif len(queue) == 0 and l > 0:
-            # If queue is empty and backtracks are left, perform a backtrack
-            l -= 1
-            if best_local_state != initial_node:
-                current_node = best_local_state.get_parent()
-                logging.info("Backtracking to best local state")
-                continue
-            logging.info("No backtracks left, exiting search")
-            logger.log_solution(None, "No backtracks left")
-            return None # Exhausts with no backtracking left
-        logging.info("Lookahead failed to find successor")
-        logger.log_solution(None, "Lookahead failed")
-        return None # Lookahead failed, no backtrack
-    logging.info("Queue exhausted")
-    logger.log_solution(None, "Queue exhausted")
-    return None # Just in case
+
+        # Exclude the failed improvement before revisiting its parent, so the
+        # next lookahead can explore alternatives instead of choosing it again.
+        failed_states.add(current_node.state)
+        if current_node.parent is None or backtracks_left == 0:
+            break
+        backtracks_left -= 1
+        current_node = current_node.parent
+        logger.restart()
+
+    logger.log_solution(None, "No solution found")
+    return None

@@ -58,7 +58,7 @@ class Benchmark():
 
         self.total_ordering_calls = sum([ordering_calls for (lookahead_success, expansions, heuristic_calls, ordering_calls, exit_message) in self.lookahead_completions])
 
-        self.logger.benchmarks(','.join([
+        self.logger.log(25, ','.join([
             str(self.task_name),
             str(self.search_name),
             str(self.heuristic_name),
