@@ -23,6 +23,8 @@ import logging
 import os
 import sys
 import csv
+import json
+from functools import partial
 
 from pyperplan.planner import (
     find_domain,
@@ -74,7 +76,14 @@ def main():
         default="",
         help="Output file for benchmark results"
     )
+    argparser.add_argument(
+        "--conjunctions", help="JSON list of fact lists for hcff (grounded fact names)"
+    )
     args = argparser.parse_args()
+    if args.conjunctions and args.heuristic != "hcff":
+        argparser.error("--conjunctions requires -H hcff")
+    if args.search == "rhc" and args.heuristic != "hcff":
+        argparser.error("rhc requires -H hcff")
 
     BENCHMARK = 25
     logging.addLevelName(BENCHMARK, "BENCHMARK")
@@ -129,6 +138,11 @@ def main():
 
     search = SEARCHES[args.search]
     heuristic = HEURISTICS[args.heuristic]
+    if args.conjunctions:
+        with open(args.conjunctions) as source:
+            conjunctions = json.load(source)
+        heuristic = partial(heuristic, conjunctions=conjunctions)
+        heuristic.__name__ = "hCFFHeuristic"
 
     if args.search in ["bfs", "ids", "sat"]:
         heuristic = None

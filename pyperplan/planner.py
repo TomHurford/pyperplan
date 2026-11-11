@@ -28,6 +28,7 @@ from .pddl.parser import Parser
 
 
 SEARCHES = {
+    "rhc": search.refinement_hill_climbing,
     "astar": search.astar_search,
     "wastar": search.weighted_astar_search,
     "gbf": search.greedy_best_first_search,

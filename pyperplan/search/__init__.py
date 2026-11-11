@@ -28,3 +28,4 @@ from .episodic_enforced_hill_climbing import episodic_enforced_hill_climbing
 from .guided_enforced_hill_climbing import guided_enforced_hill_climbing
 from .hb_enforced_hill_climbing import hbehc
 from .hybrid_enforced_hill_climbing import hybrid_enforced_hill_climbing
+from .refinement_hill_climbing import refinement_hill_climbing
